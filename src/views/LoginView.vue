@@ -110,7 +110,7 @@ export default {
                         this.error = 'Mauvais nom d\'utilisateur ou mot de passe.';
                     }
                 }
-            } catch (err) {
+            } catch {
                 if (this.error === '') {
                     this.error = 'Une erreur s\'est produite.';
                 }
