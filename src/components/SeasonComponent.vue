@@ -4,7 +4,7 @@
             <div class="card">
                 <div class="card-image">
                     <figure class="image is-3by4">
-                        <img v-bind:src="s.imgURL"
+                        <img v-bind:src="s.imgUrl"
                              v-bind:alt="s.number" class="image">
                     </figure>
                 </div>

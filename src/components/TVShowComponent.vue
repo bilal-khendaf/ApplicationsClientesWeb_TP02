@@ -5,7 +5,7 @@
                 <div class="card">
                     <div class="card-image">
                         <figure class="image is-2by3">
-                            <img v-bind:src="tvshow.imgURL" v-bind:alt="tvshow.title">
+                            <img v-bind:src="tvshow.imgUrl" v-bind:alt="tvshow.title">
                         </figure>
                     </div>
                     <div class="card-content">

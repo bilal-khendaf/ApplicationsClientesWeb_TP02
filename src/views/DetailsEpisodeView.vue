@@ -15,7 +15,7 @@
                 <router-link v-bind:to="{ name: 'playEpisode',
                     params: { id: this.$route.params.id} }">
                     <div class="has-text-centered" style="padding-top: 50px;">
-                        <img v-bind:alt="episode.title" v-bind:src="episode.imgURL"
+                        <img v-bind:alt="episode.title" v-bind:src="episode.imgUrl"
                              style="position: relative;"/>
                         <img alt="play" :src="image"
                              class="asset"/>

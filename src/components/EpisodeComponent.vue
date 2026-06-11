@@ -5,7 +5,7 @@
                  v-bind:class="historique.includes(e.episodeId) ? 'disabled': 'enabled'">
                 <div class="card-image">
                     <figure class="image is-16by9">
-                        <img v-bind:src="e.imgURL" alt="Image">
+                        <img v-bind:src="e.imgUrl" alt="Image">
                     </figure>
                 </div>
                 <div class="card-content">

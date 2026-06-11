@@ -18,7 +18,7 @@
         </div>
         <main v-if="$store.state.token!=='' && episodeData!==null">
             <video autoplay controls muted>
-                <source v-bind:src="episodeData.videoURL" type="video/mp4">
+                <source v-bind:src="episodeData.videoUrl" type="video/mp4">
             </video>
         </main>
     </div>

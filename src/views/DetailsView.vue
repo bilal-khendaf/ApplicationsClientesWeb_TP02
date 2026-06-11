@@ -3,7 +3,7 @@
         <main>
             <div class="columns">
                 <div class="column is-5">
-                    <img v-bind:src="this.tvShowData.imgURL"
+                    <img v-bind:src="this.tvShowData.imgUrl"
                          v-bind:alt="tvShowData.title" class="image">
                 </div>
                 <div class="column is-7">
