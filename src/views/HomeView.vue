@@ -1,106 +1,78 @@
 <template>
     <div class="container">
         <div class="section">
-            <form role="search">
-                <div class="columns is-centered">
-                    <div class="field is-horizontal">
-                        <div class="field-label is-normal">
-                            <label class="label" for="title">Title: </label>
-                        </div>
-                        <div class="field-body">
+            <div class="box mb-6" style="background: rgba(255,255,255,0.6); backdrop-filter: blur(10px); border-radius: 16px;">
+                <form role="search">
+                    <div class="columns is-vcentered">
+                        <div class="column is-4">
                             <div class="field">
-                                <p class="control">
-                                    <input class="input" id="title" name="title" v-model="title">
-                                </p>
+                                <label class="label" for="title">Rechercher un titre</label>
+                                <div class="control has-icons-left">
+                                    <input class="input is-medium" id="title" name="title" v-model="title" placeholder="Ex: Attack on Titan...">
+                                    <span class="icon is-small is-left">
+                                        <i class="fas fa-search"></i>
+                                    </span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="field is-horizontal" style="padding-left: 20px;">
-                        <div class="field-label is-normal">
-                            <label class="label " for="studio">Studio: </label>
-                        </div>
-                        <div class="field-body">
+                        <div class="column is-4">
                             <div class="field">
-                                <div class="control select">
-                                    <select class="select" id="studio" name="studio"
-                                            v-model="studio">
-                                        <option selected></option>
-                                        <option
-                                            v-for="s in studios"
-                                            v-bind:key="s.studioId"
-                                            v-bind:value="s.studioId">
-                                            {{ s.name }}
-                                        </option>
-                                    </select>
+                                <label class="label" for="studio">Filtrer par Studio</label>
+                                <div class="control has-icons-left">
+                                    <div class="select is-medium is-fullwidth">
+                                        <select id="studio" name="studio" v-model="studio">
+                                            <option value="">Tous les studios</option>
+                                            <option v-for="s in studios" :key="s.studioId" :value="s.studioId">
+                                                {{ s.name }}
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <span class="icon is-small is-left">
+                                        <i class="fas fa-building"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column is-4">
+                            <div class="field">
+                                <label class="label">Genres</label>
+                                <div class="buttons">
+                                    <button type="button" v-for="g in genres" :key="g.genreId"
+                                            class="button is-small is-rounded"
+                                            :class="genre.includes(g.genreId) ? 'is-primary' : 'is-light'"
+                                            @click="toggleGenre(g.genreId)">
+                                        {{ g.name }}
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </form>
+            </div>
+
+            <div v-if="filteredTVShows.length > 0">
+                <div class="columns is-multiline is-mobile">
+                    <TVShowComponent v-for="tvShow in chuncked[currentPage]" :key="tvShow.tvshowId" :tvshow="tvShow" />
                 </div>
-                <div class="panel">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">
-                        <span class="icon">
-                            <i class="fa fa-film"></i>
-                        </span>
-                            <span>
-                            <strong>
-                                <span class="title">Genres</span>
-                            </strong>
-                        </span>
-                        </h3>
-                    </div>
-                    <div class="panel-block">
-                        <div class="columns is-mobile is-multiline">
-                            <div class="column is-2"
-                                 v-for="g in genres"
-                                 v-bind:key="g.genreId"
-                            >
-                                <label class="checkbox label">
-                                    <input type="checkbox"
-                                           v-model="genre"
-                                           v-bind:value="g.genreId"
-                                    >
-                                    {{ g.name }}
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
-        <div class="section">
-            <main>
-                <div class="block">
-                    <div class="columns is-multiline is-mobile">
-                        <t-v-show-component
-                            v-for="tvShow in chuncked[this.currentPage]"
-                            v-bind:key="tvShow.tvshowId"
-                            v-bind:tvshow="tvShow">
-                        </t-v-show-component>
-                    </div>
-                </div>
-            </main>
-        </div>
-        <div role="navigation" class="section">
-            <nav class="pagination" role="navigation" aria-label="pagination">
-                <button class="pagination-previous" v-if="currentPage>0"
-                        v-on:click="this.currentPage -=1">&lt;
-                </button>
-                <button class="pagination-next" v-if="currentPage< pagination -1"
-                        v-on:click="this.currentPage +=1">&gt;
-                </button>
-                <ul class="pagination-list">
-                    <li>
-                        <button class="pagination-link" aria-label="Goto next page"
-                                v-for=" (page, key) in pagination" :key="key"
-                                v-on:click="this.currentPage=key"
-                                v-bind:class="{'is-current' : this.currentPage===key}">
-                            {{ key + 1 }}
-                        </button>
-                    </li>
-                </ul>
-            </nav>
+
+                <nav class="pagination is-centered is-rounded mt-6" role="navigation" aria-label="pagination">
+                    <a class="pagination-previous" :disabled="currentPage === 0" @click="currentPage > 0 && currentPage--">Précédent</a>
+                    <a class="pagination-next" :disabled="currentPage >= pagination - 1" @click="currentPage < pagination - 1 && currentPage++">Suivant</a>
+                    <ul class="pagination-list">
+                        <li v-for="page in pagination" :key="page">
+                            <a class="pagination-link" :class="{ 'is-current': currentPage === page - 1 }"
+                               @click="currentPage = page - 1">{{ page }}</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <div v-else class="has-text-centered py-6">
+                <span class="icon is-large has-text-grey-light mb-4">
+                    <i class="fas fa-search fa-3x"></i>
+                </span>
+                <p class="title is-4 has-text-grey">Aucun résultat trouvé</p>
+                <button class="button is-text" @click="resetFilters">Réinitialiser les filtres</button>
+            </div>
         </div>
     </div>
 </template>
@@ -116,8 +88,8 @@ export default {
         return {
             title: '',
             studio: '',
-            genres: [],
-            genre: [],
+            genre: [], // IDs of selected genres
+            genres: [], // All genres from API
             studios: [],
             tvShows: [],
             currentPage: 0,
@@ -143,26 +115,36 @@ export default {
                 this.tvShows = await response.json();
             }
         },
+        toggleGenre(id) {
+            const index = this.genre.indexOf(id);
+            if (index === -1) {
+                this.genre.push(id);
+            } else {
+                this.genre.splice(index, 1);
+            }
+            this.currentPage = 0;
+        },
+        resetFilters() {
+            this.title = '';
+            this.studio = '';
+            this.genre = [];
+            this.currentPage = 0;
+        },
         resetPage() {
             this.currentPage = 0;
         },
     },
     computed: {
         filteredTVShows() {
-            this.resetPage();
-            const {
-                title,
-                studio,
-                genre,
-            } = this;
-            return this.tvShows.filter((tvShow) => (
-                (title === '' || tvShow.title.toLowerCase()
-                    .includes(title.toLowerCase()))
-                && (studio === '' || tvShow.studio.studioId === studio)
-                && (genre.length === 0
-                    || genre.every((g) => tvShow.genres.map((genreTvShow) => genreTvShow.genreId)
-                        .includes(g)))
-            ));
+            const { title, studio, genre } = this;
+            return this.tvShows.filter((tvShow) => {
+                const matchTitle = title === '' || tvShow.title.toLowerCase().includes(title.toLowerCase());
+                const matchStudio = studio === '' || tvShow.studio.studioId === studio;
+                const matchGenres = genre.length === 0 || genre.every((gId) => 
+                    tvShow.genres.some((tg) => tg.genreId === gId)
+                );
+                return matchTitle && matchStudio && matchGenres;
+            });
         },
         pagination() {
             return Math.ceil(this.filteredTVShows.length / this.nbrEpisodesPerPage);
@@ -178,12 +160,15 @@ export default {
             return chunkedTvShows;
         },
     },
+    watch: {
+        title() { this.currentPage = 0; },
+        studio() { this.currentPage = 0; },
+    },
     mounted() {
         this.getStudios();
         this.getGenres();
         this.getTVShows();
     },
-
 };
 </script>
 
